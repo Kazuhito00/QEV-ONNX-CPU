@@ -1,0 +1,67 @@
+[project]
+name = "qev-onnx-cpu"
+version = "0.1.0"
+description = "QEV 0.2.1 (typed decisions over text and one image) with onnxruntime + numpy only: no torch, no transformers. CPU, and GPU when onnxruntime-gpu is installed"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+# Runtime. That is the whole list. pillow is only imported when a request carries an image.
+dependencies = [
+    "onnxruntime>=1.20",
+    "numpy>=1.26",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+# GPU (CUDA 13 + cuDNN 9 on PATH; see "Running on a GPU" in the README). onnxruntime-gpu and onnxruntime write into the same
+# onnxruntime/ folder and must not be installed together: after `uv sync --extra gpu` run
+#   uv pip install --force-reinstall --no-deps onnxruntime-gpu
+# and use `uv run --no-sync` afterwards (a plain `uv run` puts the CPU build back).
+gpu = [
+    "onnxruntime-gpu>=1.20",
+]
+
+[dependency-groups]
+# Only for tests/. The tests need no model.
+test = [
+    "pytest>=8",
+]
+# Only for demo_inference_webcam.py (camera capture and the live window). Never imported by qev_decide.
+webcam = [
+    "opencv-python>=4.8",
+]
+# Only for the oracle gates in verify/ (they compare against QEV's own runtime and the Hugging Face tokenizer / processor) and
+# export/make_golden*.py. `qev` is the PyPI package of the original model (import name `veyra`); it pins torch, transformers
+# and numpy and needs Python 3.12. It cannot share an environment with the `export` group: use `uv sync --group oracle`
+# or `uv sync --group export`, not both. Never install it into another project's environment (it is not our `qev_decide`).
+oracle = [
+    "qev==0.2.1; python_version == '3.12'",
+]
+# Only for export/export_onnx.py and export/export_vision.py. Never imported at runtime.
+export = [
+    "torch>=2.14.1",
+    "torchvision>=0.29.1",
+    "transformers==5.18.0",
+    "onnx>=1.23.2",
+    "onnxscript>=0.7.2",
+    "safetensors>=0.8.0",
+    "huggingface-hub>=1.33.0",
+]
+
+[tool.uv]
+conflicts = [
+    [{ group = "oracle" }, { group = "export" }],
+]
+
+# `uv sync` installs the code in this checkout (qev_decide) so that
+#   uv pip install git+https://github.com/Kazuhito00/QEV-ONNX-CPU
+# gives `import qev_decide` too. The demos also run straight from the checkout (`uv run demo_inference_text.py`).
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["qev_decide"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

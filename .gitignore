@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments (uv)
+.venv/
+.venv-*/
+venv/
+env/
+.env
+
+# Model files and downloads: never committed (they go to a GitHub Release, see release/make_release.py)
+models/
+*.onnx
+*.onnx.data
+*.onnx_data
+*.data
+*.data.part*
+*.part
+*.part[0-9][0-9][0-9]
+*.pt
+*.safetensors
+*.npz.tmp
+# onnxruntime profiling output (one of these once reached 390 MB in another repository)
+onnxruntime_profile_*.json
+*.prof
+
+# Logs and scratch
+*.log
+artifacts/_tmp_images/
+artifacts/_tmp_*/
+_work/
+ref/
+tmp/
+
+# But keep these small data files
+!artifacts/golden*.npz
+!artifacts/images/*.png

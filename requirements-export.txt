@@ -1,0 +1,11 @@
+# export/: python 3.12; same as the 'export' dependency group of pyproject.toml (uv sync --group export)
+torch>=2.14.1
+transformers==5.18.0
+onnx>=1.23.2
+onnxscript>=0.7.2
+onnxruntime>=1.30.0
+safetensors>=0.8.0
+numpy>=2.5.3
+huggingface-hub>=1.33.0
+torchvision>=0.29.1
+

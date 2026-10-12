@@ -1,0 +1,4 @@
+# Runtime. That is the whole list (pillow is only imported when a request carries an image).
+onnxruntime>=1.20
+numpy>=1.26
+pillow>=10.0
